@@ -26,7 +26,7 @@ public class avion{
         return this.cantVuelos;
 
     }
-    public String getCantVuelo(){
+    public String getCantAsientos(){
         return this.cantAsientos;
     }
     public String getKMRecorridos(){

@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.IOException;
+import java.lang.*;
 
 public class main {
 
@@ -15,9 +17,9 @@ public class main {
         Scanner sc = new Scanner(System.in);
 
         // Variables
-        String rutaArchivoAviones = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/aviones.txt";
-        String RutaArchivoVuelos = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/vuelos.txt";
-        String RutaArchivoRutas = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/rutas.txt";
+        String rutaArchivoAviones = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\aviones.txt";
+        String RutaArchivoVuelos = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\vuelos.txt";
+        String RutaArchivoRutas = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\rutas.txt";
         int cantAviones = contarLineas(rutaArchivoAviones);
         int cantVuelos = contarLineas(RutaArchivoVuelos);
         int cantRuta = contarLineas(RutaArchivoRutas);
@@ -34,7 +36,8 @@ public class main {
                 + "1 - Cargar un nuevo avion\n"
                 + "2 - Cargar un nuevo vuelo\n"
                 + "3 - Registrar un vuelo como terminado\n"
-                + "");
+                + "4 - Mostrar el promedio de personas en vuelos terminados\n"
+                + "5 - Crear archivo de aviones ordenados segun un dia seleccionado\n");
 
         // Input de eleccion
         int opcion = sc.nextInt();
@@ -54,8 +57,21 @@ public class main {
                 ArrVuelos = new vuelo[cantVuelos];
                 ArrVuelos = retornarArregloVuelos(cantVuelos);
                 break;
-            case 3: // Carga una ruta nueva
+            case 3: // Marcar vuelo como realizado
                 llamarModuloRealizacion(ArrVuelos, ArrAviones, ArrRuta);
+                cantAviones = contarLineas(rutaArchivoAviones);
+                ArrAviones = new avion[cantAviones];
+                ArrAviones = retornarArregloAviones(cantAviones);
+                break;
+            case 4: // Marcar vuelo como realizado
+                System.out.println(promedioRecursivo(ArrVuelos, ArrAviones));
+
+                break;
+            case 5: // Marcar vuelo como realizado
+                listaVuelos(ArrVuelos, ArrRuta);
+                ArrAviones = new avion[cantAviones];
+                ArrAviones = retornarArregloAviones(cantAviones);
+
                 break;
             default: // Default en caso de que no haga ninguna operacion anterior
                 System.out.println("Entrada erronea o inexistente!");
@@ -67,7 +83,8 @@ public class main {
 
     }
 
-    // Archivo AVIONES (Crear avion, cargar Aviones en el arreglo)
+    // $ Funciones de Aviones (Agregar nuevo avion y Cargar arreglo avion)
+    // ? Archivo AVIONES (Crear avion, cargar Aviones en el arreglo)
     public static void crearNuevoAvion(avion[] arregloAviones) {
         // Declaro Scanner
         Scanner sc = new Scanner(System.in);
@@ -92,7 +109,7 @@ public class main {
 
         // Validar que el ID cumple con las condiciones
         if (id.matches("^(LV|LQ)-([A-Z]{3}|X[0-9]{3}|S[0-9]{3}|[0-9]{3}|SX[0-9]{3})$") && Cargado == true) {
-            String Aviones = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/aviones.txt";
+            String Aviones = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\aviones.txt";
             try {
                 // FileWriter tiene como parametro true para habilitar el modo append
                 // De edicion de archivo
@@ -159,7 +176,7 @@ public class main {
         avion[] ArrAviones = new avion[cantAviones];
 
         // Aqui se define donde esta guardado del archivo.txt de los aviones
-        String Aviones = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/aviones.txt";
+        String Aviones = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\aviones.txt";
 
         // Inicia la variable linea, que es la encargada de almacenar las lineas del
         // .txt
@@ -196,8 +213,10 @@ public class main {
 
         return ArrAviones;
     }
+    // $-------
 
-    // Archivo VUELOS (Agregar nuevo vuelo)
+    // $ Funciones de Vuelos (Agregar nuevo vuelo y Cargar arreglo vuelos)
+    // ? Archivo VUELOS (Agregar nuevo vuelo)
     public static void agregarVuelo(avion[] arregloAviones, vuelo[] arregloVuelos, ruta[] arregloRutas) {
         // Declaro Scanner
         Scanner sc = new Scanner(System.in);
@@ -290,7 +309,7 @@ public class main {
         if (Cargado) {
             newVuelo += idVuelo + ";" + idAvion + ";" + idRuta + ";" + dia + ";" + hora;
 
-            String Aviones = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/vuelos.txt";
+            String Aviones = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\vuelos.txt";
             try {
                 // FileWriter tiene como parametro true para habilitar el modo append
                 // De edicion de archivo
@@ -313,13 +332,13 @@ public class main {
 
     }
 
-    // Funcion para cargar los vuelos en un arreglo
+    // ? Funcion para cargar los vuelos en un arreglo
     public static vuelo[] retornarArregloVuelos(int cantVuelos) {
 
         // Crea la variable de arreglo que se retorna
         vuelo[] ArrVuelo = new vuelo[cantVuelos];
         // Aqui se define donde esta guardado del archivo.txt de los aviones
-        String Vuelos = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/vuelos.txt";
+        String Vuelos = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\vuelos.txt";
 
         // Inicia la variable linea, que es la encargada de almacenar las lineas del
         // .txt
@@ -340,7 +359,11 @@ public class main {
                 String[] parts = linea.split(";");
                 // Crea dentro de la posicion 'i' el nuevo avion mediante la separacion del
                 // metodo split
+              
                 arregloVuelos[i] = new vuelo(parts[0], parts[1], parts[4], parts[3], parts[2]);
+                if(parts.length>5 && parts[5].equalsIgnoreCase("true")){
+                    arregloVuelos[i].setVueloTerminado(true);
+                }
                 i++;
             }
 
@@ -356,13 +379,15 @@ public class main {
 
         return ArrVuelo;
     }
+    // $-------
 
-    // ARCHIVO RUTAS
+    // $ Funciones de RUTA (Cargar Arreglo ruta)
+    // ? ARCHIVO RUTAS
     public static ruta[] retornarArregloRuta(int cantRutas) {
         // Crea la variable de arreglo que se retorna
         ruta[] ArrRuta = new ruta[cantRutas];
         // Aqui se define donde esta guardado del archivo.txt de los aviones
-        String Rutas = "/export/home/matias.contreras/Escritorio/EjercicioFInal/Archivos/rutas.txt";
+        String Rutas = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\rutas.txt";
 
         // Inicia la variable linea, que es la encargada de almacenar las lineas del
         // .txt
@@ -399,8 +424,9 @@ public class main {
 
         return ArrRuta;
     }
+    // $-------
 
-    // Método estático para contar las líneas de un archivo
+    // ! Método estático para contar las líneas de un archivo
     public static int contarLineas(String rutaArchivo) {
         int contadorLineas = 0;
 
@@ -414,77 +440,247 @@ public class main {
 
         return contadorLineas; // Retorna el total de líneas
     }
+    // !-------
 
-
-    //EJERCICIO 3 
-    public static void marcarRealizacion(vuelo unVuelo, avion unAvion, ruta[] arrRutas) {
-        unVuelo.setVueloTerminado(true);
-        String cantKm = "";
-        int i = 0, kmActuales, cantKmNuevos, resultadoKm, cantVuelos;
-        boolean rutaEncontrada = false;
-    
-        // Buscar la ruta correspondiente
-        while (i < arrRutas.length && !rutaEncontrada) {
-            if (arrRutas[i].getNroRuta().equalsIgnoreCase(unVuelo.getIdRuta())) {
-                cantKm = arrRutas[i].getKmDistancia();
-                rutaEncontrada = true;
-            }
-            i++;
-        }
-    
-        // Verificar si la ruta fue encontrada
-        if (!rutaEncontrada) {
-            System.out.println("Error: Ruta no encontrada.");
-        } else {
-            // Calcular los kilómetros recorridos y actualizar el avión
-            kmActuales = Integer.parseInt(unAvion.getKMRecorridos());
-            cantKmNuevos = Integer.parseInt(cantKm);
-            resultadoKm = kmActuales + cantKmNuevos;
-    
-            // Actualizar cantidad de vuelos
-            cantVuelos = Integer.parseInt(unAvion.getCantVuelo());
-            unAvion.setCantVuelos(String.valueOf(cantVuelos + 1));
-            unAvion.setKMRecorridos(String.valueOf(resultadoKm));
-        }
-    }
-
-    public static void llamarModuloRealizacion(vuelo[] ArrVuelos,avion[] ArrAviones, ruta[] ArrRuta){
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Ingrese el ID del vuelo que desea marcar como terminado");        
-        String idVuelo = sc.nextLine();
-        int posAvion = -1, posVuelo = -1, i = 0, j = 0;
-        boolean vueloEncontrado = false, avionEncontrado = false;
-
-        // Buscar el vuelo por ID
-        while (i < ArrVuelos.length && !vueloEncontrado) {
-            if (idVuelo.equalsIgnoreCase(ArrVuelos[i].getNumVuelo())) {
-                posVuelo = i;
-                vueloEncontrado = true;
-            }
-            i++;
-        }
-
-        // Buscar el avión correspondiente al vuelo si el vuelo fue encontrado
-        if (vueloEncontrado) {
-            while (j < ArrAviones.length && !avionEncontrado) {
-                if (ArrVuelos[posVuelo].getidAvion().equalsIgnoreCase(ArrAviones[j].getIdentificacion())) {
-                    posAvion = j;
-                    avionEncontrado = true;
+    // $ EJERCICIO 4
+    // ? Función para actualizar los datos de un avión
+    public static void actualizarDatosAvion(String idAvion, int kmRecorridos, avion[] arregloAviones) {
+        String rutaArchivoAviones = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\aviones.txt";
+        try {
+            // Leer el archivo original
+            BufferedReader lector = new BufferedReader(new FileReader(rutaArchivoAviones));
+            StringBuilder contenidoActualizado = new StringBuilder();
+            String linea;
+            while ((linea = lector.readLine()) != null) {
+                String[] partes = linea.split(";");
+                if (partes[0].equalsIgnoreCase(idAvion)) {
+                    // Actualizar los kilómetros recorridos
+                    int kmActuales = Integer.parseInt(partes[4]);
+                    int vuelosActuales = Integer.parseInt(partes[3]);
+                    partes[4] = String.valueOf(kmActuales + kmRecorridos);// Sumar los nuevos km
+                    partes[3] = String.valueOf(vuelosActuales + 1); // Suma uno a los vuelos recorridos
+                    linea = String.join(";", partes);
                 }
-                j++;
+                contenidoActualizado.append(linea).append(System.lineSeparator());
             }
-        }
+            lector.close();
 
-        // Mostrar los resultados
-        if (vueloEncontrado && avionEncontrado) {
-            marcarRealizacion(ArrVuelos[posVuelo], ArrAviones[posAvion], ArrRuta);
-        } else if (!vueloEncontrado) {
-            System.out.println("El vuelo con ID " + idVuelo + " no se encontró.");
-        } else {
-            System.out.println("El avión correspondiente al vuelo no se encontró.");
+            // Escribir el archivo con los datos actualizados
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivoAviones));
+            escritor.write(contenidoActualizado.toString());
+            escritor.close();
+        } catch (IOException ex) {
+            System.err.println("Error al actualizar los datos del avión: " + ex.getMessage());
         }
-
-        System.out.println(ArrAviones[posAvion].getKMRecorridos());
     }
-    //FIN EJERCICIO 3
+
+    // ? Función para marcar un vuelo como realizado
+    public static void llamarModuloRealizacion(vuelo[] arregloVuelos, avion[] arregloAviones, ruta[] arregloRutas) {
+        Scanner sc = new Scanner(System.in);
+
+        // Solicitar ID del vuelo a marcar como realizado
+        System.out.println("Ingrese el identificador del vuelo que desea marcar como realizado:");
+        String idVuelo = sc.nextLine();
+        boolean vueloEncontrado = false;
+        boolean vueloHecho = false;
+        String rutaArchivoVuelos = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\vuelos.txt";
+        try {
+            // Leer el archivo original de vuelos
+            BufferedReader lector = new BufferedReader(new FileReader(rutaArchivoVuelos));
+            StringBuilder contenidoActualizado = new StringBuilder();
+            String linea;
+
+            while ((linea = lector.readLine()) != null) {
+                String[] partes = linea.split(";");
+
+                // Asegurar que partes tenga al menos 6 elementos
+                if (partes.length < 6) {
+                    partes = Arrays.copyOf(partes, 6);
+                    for (int i = 0; i < partes.length; i++) {
+                        if (partes[i] == null) {
+                            partes[i] = ""; // Rellenar valores faltantes con cadena vacía
+                        }
+                    }
+                }
+
+                if (partes[0].equalsIgnoreCase(idVuelo)) {
+                    if (!partes[5].equalsIgnoreCase("true")) {
+
+                        for (int i = 0; i < arregloVuelos.length; i++) {
+                            if (arregloVuelos[i].getNumVuelo().equalsIgnoreCase(idVuelo)) {
+                                arregloVuelos[i].setVueloTerminado(true);
+
+                                //System.out.println("Entro aca papi");
+                            }
+                        }
+
+                        vueloEncontrado = true;
+                        partes[5] = "true"; // Marcar como realizado
+
+                        // Obtener los kilómetros de la ruta asociada
+                        String idRuta = partes[2];
+                        int kmRuta = 0;
+                        for (ruta r : arregloRutas) {
+                            if (r.getNroRuta().equalsIgnoreCase(idRuta)) {
+                                kmRuta = Integer.parseInt(r.getKmDistancia());
+                                break;
+                            }
+                        }
+
+                        // Actualizar los datos del avión
+                        String idAvion = partes[1];
+                        actualizarDatosAvion(idAvion, kmRuta, arregloAviones);
+
+                        // Reconstruir la línea con el vuelo actualizado
+                        linea = String.join(";", partes);
+                    } else {
+                        System.out.println("El vuelo ya ah sido completado");
+                        vueloHecho = true;
+                    }
+                }
+                contenidoActualizado.append(linea).append(System.lineSeparator());
+            }
+            lector.close();
+
+            // Escribir el archivo actualizado
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivoVuelos));
+            escritor.write(contenidoActualizado.toString());
+            escritor.close();
+
+            if (vueloEncontrado && !vueloHecho) {
+                System.out.println(
+                        "El vuelo ha sido marcado como realizado y los kilómetros actualizados correctamente.");
+            } else {
+                if (!vueloHecho) {
+                    System.out.println("No se encontró el vuelo con el identificador proporcionado.");
+                }
+            }
+        } catch (IOException ex) {
+            System.err.println("Error al marcar el vuelo como realizado: " + ex.getMessage());
+        }
+    }
+
+    // $ FIN EJERCICIO 4
+
+    // $ EJERCICIO 5
+    public static int promedioRecursivo(vuelo[] arregloVuelos, avion[] arrAvions) {
+        String rutaArchivoVuelos = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\vuelos.txt";
+
+        try {
+            BufferedReader lector = new BufferedReader(new FileReader(rutaArchivoVuelos));
+            StringBuilder contenidoActualizado = new StringBuilder();
+
+            int[] resultado = promedioHelper(lector, contenidoActualizado, arrAvions, 0, 0);
+
+            // Escribir el archivo actualizado
+            BufferedWriter escritor = new BufferedWriter(new FileWriter(rutaArchivoVuelos));
+            escritor.write(contenidoActualizado.toString());
+            escritor.close();
+
+            return resultado[1] == 0 ? 0 : resultado[0] / resultado[1]; // Evitar división por cero
+        } catch (IOException ex) {
+            System.err.println("Error al procesar el archivo: " + ex.getMessage());
+            return 0;
+        }
+    }
+
+    private static int[] promedioHelper(BufferedReader lector, StringBuilder contenidoActualizado, avion[] arrAvions,
+            int cantPasajeros, int cantVuelos) throws IOException {
+        String linea = lector.readLine();
+        int[] resultado; // Variable para almacenar el resultado
+
+        if (linea == null) { // Caso base
+            resultado = new int[] { cantPasajeros, cantVuelos };
+        } else {
+            String[] partes = linea.split(";");
+            if (partes.length < 6) { // Asegurar que partes tenga al menos 6 elementos
+                partes = Arrays.copyOf(partes, 6);
+                for (int i = 0; i < partes.length; i++) {
+                    if (partes[i] == null)
+                        partes[i] = "";
+                }
+            }
+
+            if (partes[5].equalsIgnoreCase("true")) {
+                for (avion avion : arrAvions) {
+                    if (avion.getIdentificacion().equalsIgnoreCase(partes[1])) {
+                        cantPasajeros += Integer.parseInt(avion.getCantAsientos());
+                        cantVuelos++;
+                        break;
+                    }
+                }
+            }
+
+            contenidoActualizado.append(linea).append(System.lineSeparator());
+            resultado = promedioHelper(lector, contenidoActualizado, arrAvions, cantPasajeros, cantVuelos); // Llamada
+                                                                                                            // recursiva
+        }
+
+        return resultado; // Único return del método
+    }
+
+    // $ FIN EJERCICIO 5
+
+    
+    // $ EJERCICIO 6
+    public static void listaVuelos(vuelo[] arrVuelos, ruta[] arrRutas) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Ingrese el dia de los aviones para la lista de vuelos ordenada");
+        String dia = sc.nextLine();
+        try {
+            // Crear un objeto FileWriter para el archivo "AvionesOrdenados.txt"
+            FileWriter writer = new FileWriter("AvionesOrdenados.txt");
+
+            int h = 0;
+            writer.write("Lista de aviones ordenados:\n");
+            while (h < arrVuelos.length) {
+                int indexMenor = -1; // Guardamos el índice del vuelo con la menor distancia
+                int distanciaMenor = Integer.MAX_VALUE; // Inicializamos la menor distancia como un valor muy grande
+
+                // Buscar el vuelo con la menor distancia en esta vuelta
+                for (int i = 0; i < arrVuelos.length; i++) {
+                    // Solo procesar el vuelo si no ha sido excluido (no es null)
+                    if (arrVuelos[i] != null) { // Aseguramos que no se haya "excluido" el vuelo
+                        for (int j = 0; j < arrRutas.length; j++) {
+                            if (arrVuelos[i].getIdRuta().equalsIgnoreCase(arrRutas[j].getNroRuta()) && arrVuelos[i].getDia().equalsIgnoreCase(dia)) {
+                                int distanciaRuta = Integer.parseInt(arrRutas[j].getKmDistancia());
+                                // Si encontramos un vuelo con menor distancia, lo marcamos
+                                if (distanciaRuta < distanciaMenor) {
+                                    distanciaMenor = distanciaRuta;
+                                    indexMenor = i; // Guardamos el índice del vuelo con la menor distancia
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Si encontramos un vuelo con la menor distancia, lo imprimimos
+                if (indexMenor != -1) {
+                   //Escribe en el archivo
+                    writer.write(arrVuelos[indexMenor].getNumVuelo()+";"+arrVuelos[indexMenor].getidAvion()+";"+arrVuelos[indexMenor].getIdRuta()+";"+arrVuelos[indexMenor].getDia()+";"+arrVuelos[indexMenor].getHora()+";"+arrVuelos[indexMenor].getVueloTerminado()+"\n");
+
+                    // Excluir el vuelo para futuras iteraciones
+                    arrVuelos[indexMenor] = null; // "Eliminamos" el vuelo de las futuras búsquedas
+                }
+
+                h++;
+            }
+
+            // Cerrar el archivo
+            writer.close();
+
+            System.out.println("Archivo creado exitosamente.");
+            sc.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    // $ FIN EJERCICIO 6
+
+    // $ EJERCICIO 7
+    public static void mostrarDatosAvion(avion[] arrAvions){
+
+    }
 }
