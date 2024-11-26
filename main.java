@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.io.IOException;
-import java.lang.*;
+import java.util.ArrayList;
 
 public class main {
 
@@ -29,55 +29,90 @@ public class main {
         ArrAviones = retornarArregloAviones(cantAviones);
         ArrVuelos = retornarArregloVuelos(cantVuelos);
         ArrRuta = retornarArregloRuta(cantRuta);
+        String repetir = "Si";
 
-        // Menú
-        System.out.println("\nBienvenido al sistema de monitoreo y control de rutas, viajes y aviones \n"
-                + "Que desea hacer hoy? \n"
-                + "1 - Cargar un nuevo avion\n"
-                + "2 - Cargar un nuevo vuelo\n"
-                + "3 - Registrar un vuelo como terminado\n"
-                + "4 - Mostrar el promedio de personas en vuelos terminados\n"
-                + "5 - Crear archivo de aviones ordenados segun un dia seleccionado\n");
-
-        // Input de eleccion
-        int opcion = sc.nextInt();
-        sc.nextLine();
-
-        // Operando la opción elegida
-        switch (opcion) {
-            case 1: // Carga un nuevo avion
-                crearNuevoAvion(ArrAviones);
-                cantAviones = contarLineas(rutaArchivoAviones);
-                ArrAviones = new avion[cantAviones];
-                ArrAviones = retornarArregloAviones(cantAviones);
-                break;
-            case 2: // Agrega un nuevo vuelo
-                agregarVuelo(ArrAviones, ArrVuelos, ArrRuta);
-                cantVuelos = contarLineas(RutaArchivoVuelos);
-                ArrVuelos = new vuelo[cantVuelos];
-                ArrVuelos = retornarArregloVuelos(cantVuelos);
-                break;
-            case 3: // Marcar vuelo como realizado
-                llamarModuloRealizacion(ArrVuelos, ArrAviones, ArrRuta);
-                cantAviones = contarLineas(rutaArchivoAviones);
-                ArrAviones = new avion[cantAviones];
-                ArrAviones = retornarArregloAviones(cantAviones);
-                break;
-            case 4: // Marcar vuelo como realizado
-                System.out.println(promedioRecursivo(ArrVuelos, ArrAviones));
-
-                break;
-            case 5: // Marcar vuelo como realizado
-                listaVuelos(ArrVuelos, ArrRuta);
-                ArrAviones = new avion[cantAviones];
-                ArrAviones = retornarArregloAviones(cantAviones);
-
-                break;
-            default: // Default en caso de que no haga ninguna operacion anterior
-                System.out.println("Entrada erronea o inexistente!");
-                break;
+        while (repetir.equalsIgnoreCase("Si")) {
+            // Mostrar menú
+            System.out.println("\nBienvenido al sistema de monitoreo y control de rutas, viajes y aviones \n"
+                    + "Qué desea hacer hoy? \n"
+                    + "1 - Cargar un nuevo avión\n"
+                    + "2 - Cargar un nuevo vuelo\n"
+                    + "3 - Registrar un vuelo como terminado\n"
+                    + "4 - Mostrar el promedio de personas en vuelos terminados\n"
+                    + "5 - Crear archivo de aviones ordenados según un día seleccionado\n"
+                    + "6 - Mostrar los datos de un avión\n"
+                    + "7 - Filtrar vuelos por distancia y retornar un arreglo\n");
+        
+            // Input de elección con validación
+            int opcion = -1;
+            boolean opcionValida = false;
+        
+            while (!opcionValida) {
+                System.out.print("Seleccione una opción (1-8): ");
+                if (sc.hasNextInt()) { // Verifica si la entrada es un número entero
+                    opcion = sc.nextInt();
+                    sc.nextLine(); // Limpia el buffer
+                    if (opcion >= 1 && opcion <= 8) {
+                        opcionValida = true; // La opción es válida
+                    } else {
+                        System.out.println("Opción fuera de rango. Intente nuevamente.");
+                    }
+                } else {
+                    System.out.println("Entrada no válida. Por favor ingrese un número.");
+                    sc.nextLine(); // Limpia el buffer para evitar un bucle infinito
+                }
+            }
+        
+            // Operando la opción elegida
+            switch (opcion) {
+                case 1: // Carga un nuevo avión
+                    crearNuevoAvion(ArrAviones);
+                    cantAviones = contarLineas(rutaArchivoAviones);
+                    ArrAviones = new avion[cantAviones];
+                    ArrAviones = retornarArregloAviones(cantAviones);
+                    break;
+                case 2: // Agrega un nuevo vuelo
+                    agregarVuelo(ArrAviones, ArrVuelos, ArrRuta);
+                    cantVuelos = contarLineas(RutaArchivoVuelos);
+                    ArrVuelos = new vuelo[cantVuelos];
+                    ArrVuelos = retornarArregloVuelos(cantVuelos);
+                    break;
+                case 3: // Marcar vuelo como realizado
+                    llamarModuloRealizacion(ArrVuelos, ArrAviones, ArrRuta);
+                    cantAviones = contarLineas(rutaArchivoAviones);
+                    ArrAviones = new avion[cantAviones];
+                    ArrAviones = retornarArregloAviones(cantAviones);
+                    break;
+                case 4: // Mostrar promedio de personas en vuelos terminados
+                    System.out.println(promedioRecursivo(ArrVuelos, ArrAviones));
+                    break;
+                case 5: // Crear archivo de aviones
+                    listaVuelos(ArrVuelos, ArrRuta);
+                    ArrAviones = new avion[cantAviones];
+                    ArrAviones = retornarArregloAviones(cantAviones);
+                    break;
+                case 6: // Mostrar datos de un avión
+                    mostrarDatosAvion(ArrAviones);
+                    break;
+                case 7: // Mostrar datos de un avión
+                    vuelo[] arregloVuelosFiltrado=filtrarVuelosPorDistancia(ArrVuelos, ArrRuta);
+                    System.out.println("El id de los vuelos del arreglo filtrado son " );
+                    for (int i = 0; i < arregloVuelosFiltrado.length; i++) {
+                        System.out.println(arregloVuelosFiltrado[i].getNumVuelo());
+                    }
+                    break;
+                case 8:
+                    int horariosSinVuelos = calcularHorariosSinVuelosRecursivo(ArrVuelos, 8, 0);    
+                    System.out.println("Cantidad de horarios sin vuelos en la semana: " + horariosSinVuelos);
+                    break;
+                    
+            }
+        
+            // Preguntar si desea continuar
+            System.out.println("¿Desea hacer otra operación? 'Si' para repetir, 'No' para terminar la ejecución.");
+            repetir = sc.nextLine();
         }
-
+        
         // Cierro Scanner
         sc.close();
 
@@ -359,9 +394,9 @@ public class main {
                 String[] parts = linea.split(";");
                 // Crea dentro de la posicion 'i' el nuevo avion mediante la separacion del
                 // metodo split
-              
+
                 arregloVuelos[i] = new vuelo(parts[0], parts[1], parts[4], parts[3], parts[2]);
-                if(parts.length>5 && parts[5].equalsIgnoreCase("true")){
+                if (parts.length > 5 && parts[5].equalsIgnoreCase("true")) {
                     arregloVuelos[i].setVueloTerminado(true);
                 }
                 i++;
@@ -510,7 +545,7 @@ public class main {
                             if (arregloVuelos[i].getNumVuelo().equalsIgnoreCase(idVuelo)) {
                                 arregloVuelos[i].setVueloTerminado(true);
 
-                                //System.out.println("Entro aca papi");
+                                // System.out.println("Entro aca papi");
                             }
                         }
 
@@ -621,7 +656,6 @@ public class main {
 
     // $ FIN EJERCICIO 5
 
-    
     // $ EJERCICIO 6
     public static void listaVuelos(vuelo[] arrVuelos, ruta[] arrRutas) {
         Scanner sc = new Scanner(System.in);
@@ -642,7 +676,8 @@ public class main {
                     // Solo procesar el vuelo si no ha sido excluido (no es null)
                     if (arrVuelos[i] != null) { // Aseguramos que no se haya "excluido" el vuelo
                         for (int j = 0; j < arrRutas.length; j++) {
-                            if (arrVuelos[i].getIdRuta().equalsIgnoreCase(arrRutas[j].getNroRuta()) && arrVuelos[i].getDia().equalsIgnoreCase(dia)) {
+                            if (arrVuelos[i].getIdRuta().equalsIgnoreCase(arrRutas[j].getNroRuta())
+                                    && arrVuelos[i].getDia().equalsIgnoreCase(dia)) {
                                 int distanciaRuta = Integer.parseInt(arrRutas[j].getKmDistancia());
                                 // Si encontramos un vuelo con menor distancia, lo marcamos
                                 if (distanciaRuta < distanciaMenor) {
@@ -656,8 +691,10 @@ public class main {
 
                 // Si encontramos un vuelo con la menor distancia, lo imprimimos
                 if (indexMenor != -1) {
-                   //Escribe en el archivo
-                    writer.write(arrVuelos[indexMenor].getNumVuelo()+";"+arrVuelos[indexMenor].getidAvion()+";"+arrVuelos[indexMenor].getIdRuta()+";"+arrVuelos[indexMenor].getDia()+";"+arrVuelos[indexMenor].getHora()+";"+arrVuelos[indexMenor].getVueloTerminado()+"\n");
+                    // Escribe en el archivo
+                    writer.write(arrVuelos[indexMenor].getNumVuelo() + ";" + arrVuelos[indexMenor].getidAvion() + ";"
+                            + arrVuelos[indexMenor].getIdRuta() + ";" + arrVuelos[indexMenor].getDia() + ";"
+                            + arrVuelos[indexMenor].getHora() + ";" + arrVuelos[indexMenor].getVueloTerminado() + "\n");
 
                     // Excluir el vuelo para futuras iteraciones
                     arrVuelos[indexMenor] = null; // "Eliminamos" el vuelo de las futuras búsquedas
@@ -680,7 +717,86 @@ public class main {
     // $ FIN EJERCICIO 6
 
     // $ EJERCICIO 7
-    public static void mostrarDatosAvion(avion[] arrAvions){
+    public static void mostrarDatosAvion(avion[] arrAvions) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Ingrese la id de un Avion para mostrar sus datos ");
+        String idAvion = sc.nextLine();
 
+        for (int i = 0; i < arrAvions.length; i++) {
+            if (idAvion.equalsIgnoreCase(arrAvions[i].getIdentificacion())) {
+                System.out.println("El id del avion " + arrAvions[i].getIdentificacion());
+                System.out.println("Es de Modelo: " + arrAvions[i].getModelo());
+                System.out.println("Tiene " + arrAvions[i].getCantVuelos() + " vuelos completados ");
+                System.out.println("Tiene " + arrAvions[i].getCantAsientos() + " Asientos ");
+                System.out.println("Tiene " + arrAvions[i].getKMRecorridos() + "KM hechos en total " );
+            }
+        }
+      
     }
+     // $ FIN EJERCICIO 7
+
+     
+    // $ EJERCICIO 8
+     public static vuelo[] filtrarVuelosPorDistancia(vuelo[] ArrVuelos, ruta[] arrRutas) {
+        Scanner sc = new Scanner(System.in);
+
+        // Solicitar rango al usuario
+        System.out.println("Ingrese el rango de distancia:");
+        System.out.print("Distancia mínima: ");
+        int distanciaMinima = sc.nextInt();
+        System.out.print("Distancia máxima: ");
+        int distanciaMaxima = sc.nextInt();
+
+        // Lista para almacenar los vuelos dentro del rango
+        ArrayList<vuelo> vuelosEnRango = new ArrayList<>();
+
+        // Filtrar vuelos dentro del rango según la distancia de las rutas
+        for (int i = 0; i < ArrVuelos.length; i++) {
+            for (int j = 0; j < arrRutas.length; j++) {
+                // Comparar si el vuelo tiene la ruta correspondiente y si la distancia está en el rango
+                if (ArrVuelos[i].getIdRuta().equalsIgnoreCase(arrRutas[j].getNroRuta())
+                        && Integer.parseInt(arrRutas[j].getKmDistancia()) >= distanciaMinima
+                        && Integer.parseInt(arrRutas[j].getKmDistancia()) <= distanciaMaxima) {
+
+                    // Agregar el vuelo a la lista si cumple la condición
+                    vuelosEnRango.add(ArrVuelos[i]);
+                }
+            }
+        }
+
+        // Convertir la lista a un arreglo y retornarlo
+        return vuelosEnRango.toArray(new vuelo[0]);
+    }
+    // $ FIN EJERCICIO 8
+
+    // $ EJERCICIO 9
+    public static int calcularHorariosSinVuelosRecursivo(vuelo[] arrVuelos, int horaActual, int totalHoras) {
+        // Caso base: si se han recorrido todas las horas del rango, retornar el total
+        if (horaActual > 22) {
+            return totalHoras;
+        }
+
+        // Verificar si hay un vuelo programado para la hora actual
+        boolean hayVueloEnHora = false;
+        for (vuelo v : arrVuelos) {
+            // Convertir la hora del vuelo a entero
+            int horaVuelo = Integer.parseInt(v.getHora().split(":")[0]);
+            if (horaVuelo == horaActual) {
+                hayVueloEnHora = true;
+                break;
+            }
+        }
+
+        // Si no hay vuelos en esta hora, sumar 1 al total de horarios sin vuelos
+        if (!hayVueloEnHora) {
+            totalHoras++;
+        }
+
+        // Llamada recursiva para la siguiente hora
+        return calcularHorariosSinVuelosRecursivo(arrVuelos, horaActual + 1, totalHoras);
+    }
+
+
+    // $ FIN EJERCICIO 9
+
 }
