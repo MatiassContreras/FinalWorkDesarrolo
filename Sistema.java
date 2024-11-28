@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class main {
+public class Sistema {
 
     public static void main(String[] args) {
         // Inicializo Scanner
@@ -26,12 +26,13 @@ public class main {
         avion[] ArrAviones = new avion[cantAviones];
         vuelo[] ArrVuelos = new vuelo[cantVuelos];
         ruta[] ArrRuta = new ruta[cantRuta];
-        ArrAviones = retornarArregloAviones(cantAviones);
-        ArrVuelos = retornarArregloVuelos(cantVuelos);
-        ArrRuta = retornarArregloRuta(cantRuta);
+        ArrAviones = retornarArregloAviones(cantAviones, rutaArchivoAviones);
+        ArrVuelos = retornarArregloVuelos(cantVuelos, RutaArchivoVuelos);
+        ArrRuta = retornarArregloRuta(cantRuta,RutaArchivoRutas);
         String repetir = "Si";
 
         while (repetir.equalsIgnoreCase("Si")) {
+
             // Mostrar menú
             System.out.println("\nBienvenido al sistema de monitoreo y control de rutas, viajes y aviones \n"
                     + "Qué desea hacer hoy? \n"
@@ -41,18 +42,22 @@ public class main {
                     + "4 - Mostrar el promedio de personas en vuelos terminados\n"
                     + "5 - Crear archivo de aviones ordenados según un día seleccionado\n"
                     + "6 - Mostrar los datos de un avión\n"
-                    + "7 - Filtrar vuelos por distancia y retornar un arreglo\n");
+                    + "7 - Filtrar vuelos por distancia y retornar un arreglo\n"
+                    + "8 - Encontrar la cantidad de horarios que no tienen vuelos asignados\n"
+                    + "9 - Mostrar los vuelos que salen primeros cada dia de la semana\n"
+                    + "10 - Mostrar los aviones que ya tiene un vuelo registrado en un determinado dia\n"
+                    + "11 - Mostrar la grilla de horarios de vuelos\n");
         
             // Input de elección con validación
             int opcion = -1;
             boolean opcionValida = false;
         
             while (!opcionValida) {
-                System.out.print("Seleccione una opción (1-8): ");
+                System.out.print("Seleccione una opción (1-10): ");
                 if (sc.hasNextInt()) { // Verifica si la entrada es un número entero
                     opcion = sc.nextInt();
                     sc.nextLine(); // Limpia el buffer
-                    if (opcion >= 1 && opcion <= 8) {
+                    if (opcion >= 1 && opcion <= 11) {
                         opcionValida = true; // La opción es válida
                     } else {
                         System.out.println("Opción fuera de rango. Intente nuevamente.");
@@ -69,27 +74,27 @@ public class main {
                     crearNuevoAvion(ArrAviones);
                     cantAviones = contarLineas(rutaArchivoAviones);
                     ArrAviones = new avion[cantAviones];
-                    ArrAviones = retornarArregloAviones(cantAviones);
+                    ArrAviones = retornarArregloAviones(cantAviones,rutaArchivoAviones);
                     break;
                 case 2: // Agrega un nuevo vuelo
                     agregarVuelo(ArrAviones, ArrVuelos, ArrRuta);
                     cantVuelos = contarLineas(RutaArchivoVuelos);
                     ArrVuelos = new vuelo[cantVuelos];
-                    ArrVuelos = retornarArregloVuelos(cantVuelos);
+                    ArrVuelos = retornarArregloVuelos(cantVuelos,RutaArchivoVuelos);
                     break;
                 case 3: // Marcar vuelo como realizado
                     llamarModuloRealizacion(ArrVuelos, ArrAviones, ArrRuta);
                     cantAviones = contarLineas(rutaArchivoAviones);
                     ArrAviones = new avion[cantAviones];
-                    ArrAviones = retornarArregloAviones(cantAviones);
+                    ArrAviones = retornarArregloAviones(cantAviones,rutaArchivoAviones);
                     break;
                 case 4: // Mostrar promedio de personas en vuelos terminados
-                    System.out.println(promedioRecursivo(ArrVuelos, ArrAviones));
+                    System.out.println("El promedio de las personas de los vuelos terminados es : " + promedioRecursivo(ArrVuelos, ArrAviones));
                     break;
                 case 5: // Crear archivo de aviones
                     listaVuelos(ArrVuelos, ArrRuta);
                     ArrAviones = new avion[cantAviones];
-                    ArrAviones = retornarArregloAviones(cantAviones);
+                    ArrAviones = retornarArregloAviones(cantAviones,rutaArchivoAviones);
                     break;
                 case 6: // Mostrar datos de un avión
                     mostrarDatosAvion(ArrAviones);
@@ -102,20 +107,36 @@ public class main {
                     }
                     break;
                 case 8:
-                    int horariosSinVuelos = calcularHorariosSinVuelosRecursivo(ArrVuelos, 8, 0);    
+                    String[] diasSemana = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"};
+                    int horariosSinVuelos = calcularHorariosLibresPorDiaRecursivo(ArrVuelos, diasSemana, 0, 8, 0)  ;
                     System.out.println("Cantidad de horarios sin vuelos en la semana: " + horariosSinVuelos);
                     break;
-                    
+                case 9:
+                    vuelo[] PrimerVueloPorDia= obtenerPrimerVueloPorDia(ArrVuelos);
+                    for (int i = 0; i < PrimerVueloPorDia.length; i++) {
+                        System.out.println("El primer vuelo del dia "+ PrimerVueloPorDia[i].getDia() + "\n"
+                                            + "Tiene id " + PrimerVueloPorDia[i].getNumVuelo() + "\n" 
+                                            + "El avion asignado es "+ PrimerVueloPorDia[i].getidAvion() + "\n"
+                                            + "La id de la ruta es " + PrimerVueloPorDia[i].getIdRuta() + "\n"
+                                            + "Es a las " + PrimerVueloPorDia[i].getHora() + " horas \n"
+                                            + (PrimerVueloPorDia[i].getVueloTerminado() ? "Este vuelo ya fue terminado" : "Este vuelo no fue terminado")
+                                            +"\n"+"\n");
+                    }
+                    break;
+                case 10:
+                    mostrarAvionesPorDia(ArrVuelos);
+                    break;
+                case 11:
+                    mostrarCronogramaEnGrilla(ArrVuelos);
+                    break;
             }
         
             // Preguntar si desea continuar
             System.out.println("¿Desea hacer otra operación? 'Si' para repetir, 'No' para terminar la ejecución.");
             repetir = sc.nextLine();
         }
-        
         // Cierro Scanner
         sc.close();
-
     }
 
     // $ Funciones de Aviones (Agregar nuevo avion y Cargar arreglo avion)
@@ -205,7 +226,7 @@ public class main {
         return Avion;
     }
 
-    public static avion[] retornarArregloAviones(int cantAviones) {
+    public static avion[] retornarArregloAviones(int cantAviones,String URL) {
 
         // Crea la variable de arreglo que se retorna
         avion[] ArrAviones = new avion[cantAviones];
@@ -306,8 +327,8 @@ public class main {
 
             // Verifica si es un dia válido
             Cargado = ((dia.equalsIgnoreCase("Lunes") || dia.equalsIgnoreCase("Martes")
-                    || dia.equalsIgnoreCase("Miércoles") || dia.equalsIgnoreCase("Jueves")
-                    || dia.equalsIgnoreCase("Viernes") || dia.equalsIgnoreCase("Sábado")
+                    || dia.equalsIgnoreCase("Miercoles") || dia.equalsIgnoreCase("Jueves")
+                    || dia.equalsIgnoreCase("Viernes") || dia.equalsIgnoreCase("Sabado")
                     || dia.equalsIgnoreCase("Domingo")) ? true : false);
 
             // Si el dia es válido, verifica condiciones del vuelo
@@ -368,12 +389,12 @@ public class main {
     }
 
     // ? Funcion para cargar los vuelos en un arreglo
-    public static vuelo[] retornarArregloVuelos(int cantVuelos) {
+    public static vuelo[] retornarArregloVuelos(int cantVuelos, String URL) {
 
         // Crea la variable de arreglo que se retorna
         vuelo[] ArrVuelo = new vuelo[cantVuelos];
         // Aqui se define donde esta guardado del archivo.txt de los aviones
-        String Vuelos = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\vuelos.txt";
+        String Vuelos = URL;
 
         // Inicia la variable linea, que es la encargada de almacenar las lineas del
         // .txt
@@ -418,11 +439,11 @@ public class main {
 
     // $ Funciones de RUTA (Cargar Arreglo ruta)
     // ? ARCHIVO RUTAS
-    public static ruta[] retornarArregloRuta(int cantRutas) {
+    public static ruta[] retornarArregloRuta(int cantRutas,String URL) {
         // Crea la variable de arreglo que se retorna
         ruta[] ArrRuta = new ruta[cantRutas];
         // Aqui se define donde esta guardado del archivo.txt de los aviones
-        String Rutas = "C:\\Users\\usuario\\Desktop\\FinalWork\\Archivos\\rutas.txt";
+        String Rutas = URL;
 
         // Inicia la variable linea, que es la encargada de almacenar las lineas del
         // .txt
@@ -544,8 +565,6 @@ public class main {
                         for (int i = 0; i < arregloVuelos.length; i++) {
                             if (arregloVuelos[i].getNumVuelo().equalsIgnoreCase(idVuelo)) {
                                 arregloVuelos[i].setVueloTerminado(true);
-
-                                // System.out.println("Entro aca papi");
                             }
                         }
 
@@ -707,7 +726,7 @@ public class main {
             writer.close();
 
             System.out.println("Archivo creado exitosamente.");
-            sc.close();
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -770,33 +789,161 @@ public class main {
     // $ FIN EJERCICIO 8
 
     // $ EJERCICIO 9
-    public static int calcularHorariosSinVuelosRecursivo(vuelo[] arrVuelos, int horaActual, int totalHoras) {
-        // Caso base: si se han recorrido todas las horas del rango, retornar el total
-        if (horaActual > 22) {
-            return totalHoras;
-        }
-
-        // Verificar si hay un vuelo programado para la hora actual
-        boolean hayVueloEnHora = false;
-        for (vuelo v : arrVuelos) {
-            // Convertir la hora del vuelo a entero
-            int horaVuelo = Integer.parseInt(v.getHora().split(":")[0]);
-            if (horaVuelo == horaActual) {
-                hayVueloEnHora = true;
-                break;
+    public static int calcularHorariosLibresPorDiaRecursivo(vuelo[] arrVuelos, String[] diasSemana, int diaActual, int horaActual, int totalHorasLibres) {
+        int resultado;
+    
+        if (diaActual >= diasSemana.length) {
+            // Caso base: si se han recorrido todos los días de la semana
+            resultado = totalHorasLibres;
+        } else if (horaActual > 22) {
+            // Si se han recorrido todas las horas del día actual
+            System.out.println("Día: " + diasSemana[diaActual] + " terminado.");
+            resultado = calcularHorariosLibresPorDiaRecursivo(arrVuelos, diasSemana, diaActual + 1, 8, totalHorasLibres);
+        } else {
+            // Verificar si hay un vuelo programado para el día y la hora actual
+            boolean hayVueloEnHora = false;
+            for (vuelo v : arrVuelos) {
+                int horaVuelo = Integer.parseInt(v.getHora().split(":")[0]);
+                if (v.getDia().equalsIgnoreCase(diasSemana[diaActual]) && horaVuelo == horaActual) {
+                    hayVueloEnHora = true;
+                    break;
+                }
             }
+    
+            // Si no hay vuelos en esta hora, imprimir la hora libre y aumentar el contador
+            if (!hayVueloEnHora) {
+                System.out.println("Horario libre: Día " + diasSemana[diaActual] + ", Hora " + horaActual + ":00");
+                totalHorasLibres++;
+            }
+    
+            // Llamada recursiva para la siguiente hora
+            resultado = calcularHorariosLibresPorDiaRecursivo(arrVuelos, diasSemana, diaActual, horaActual + 1, totalHorasLibres);
         }
-
-        // Si no hay vuelos en esta hora, sumar 1 al total de horarios sin vuelos
-        if (!hayVueloEnHora) {
-            totalHoras++;
-        }
-
-        // Llamada recursiva para la siguiente hora
-        return calcularHorariosSinVuelosRecursivo(arrVuelos, horaActual + 1, totalHoras);
+    
+        return resultado;
     }
-
-
+    
+    
     // $ FIN EJERCICIO 9
 
+    // $ EJERCICIO 10
+    public static vuelo[] obtenerPrimerVueloPorDia(vuelo[] arrVuelos) {
+        // Arreglo para almacenar el primer vuelo de cada día (7 días de la semana)
+        vuelo[] primerosVuelos = new vuelo[7];
+        String[] diasSemana = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"};
+    
+        // Recorrer los vuelos
+        for (vuelo v : arrVuelos) {
+            String diaVuelo = v.getDia();
+            String horaVuelo = v.getHora();
+    
+            // Convertir la hora del vuelo a entero para validación
+            int hora = Integer.parseInt(horaVuelo.split(":")[0]);
+            if (hora >= 8 && hora <= 22) { // Validar rango de horas
+                for (int i = 0; i < diasSemana.length; i++) {
+                    if (diasSemana[i].equalsIgnoreCase(diaVuelo)) {
+                        // Si no hay vuelo registrado o este es más temprano, actualizar
+                        if (primerosVuelos[i] == null || horaVuelo.compareTo(primerosVuelos[i].getHora()) < 0) {
+                            primerosVuelos[i] = v;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    
+        return primerosVuelos;
+    }
+    // $ FIN EJERCICIO 10
+   
+    //! Este modulo no lo solicitaba, pero te ayuda a determinar los aviones que ya volaron un dia determinado
+    public static void mostrarAvionesPorDia(vuelo[] arrVuelos) {
+        Scanner sc = new Scanner(System.in);
+    
+        // Solicitar al usuario el día
+        System.out.println("Ingrese el día de la semana (Ejemplo: Lunes, Martes, etc.):");
+        String diaIngresado = sc.nextLine();
+    
+        // Mostrar las IDs de los aviones que volaron ese día
+        System.out.println("Aviones que volaron el día " + diaIngresado + ":");
+        boolean hayVuelos = false;
+        for (vuelo v : arrVuelos) {
+            if (v.getDia().equalsIgnoreCase(diaIngresado)) {
+                System.out.println("ID del avión: " + v.getidAvion());
+                hayVuelos = true;
+            }
+        }
+    
+        // Mensaje en caso de que no haya vuelos
+        if (!hayVuelos) {
+            System.out.println("No hubo vuelos el día " + diaIngresado + ".");
+        }
+    }
+
+    //Esta funcion, crea en pantalla una grilla de forma "simbolica" a lo que el sistema de aviones representa
+    public static void mostrarCronogramaEnGrilla(vuelo[] arrVuelos) {
+        // Definir días de la semana y rango de horas
+        String[] diasSemana = {"Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"};
+        int horaInicio = 8; // Hora inicial
+        int horaFin = 22;   // Hora final
+    
+        // Crear el encabezado de la grilla
+        StringBuilder grilla = new StringBuilder();
+        grilla.append("┌───────────");
+        for (int hora = horaInicio; hora <= horaFin; hora++) {
+            grilla.append("┬────────────");
+        }
+        grilla.append("┐\n");
+    
+        grilla.append("│ Dia/Hora  ");
+        for (int hora = horaInicio; hora <= horaFin; hora++) {
+            grilla.append(String.format("│   %02d:00    ", hora));
+        }
+        grilla.append("│\n");
+    
+        grilla.append("├───────────");
+        for (int hora = horaInicio; hora <= horaFin; hora++) {
+            grilla.append("┼────────────");
+        }
+        grilla.append("┤\n");
+    
+        // Rellenar la grilla con los datos de vuelos
+        for (String dia : diasSemana) {
+            grilla.append(String.format("│ %-9s ", dia)); // Día de la semana
+            for (int hora = horaInicio; hora <= horaFin; hora++) {
+                boolean vueloEncontrado = false;
+                for (vuelo v : arrVuelos) {
+                    if (v.getDia().equalsIgnoreCase(dia) && v.getHora().startsWith(String.format("%02d", hora))) {
+                        // Si se encuentra un vuelo, lo agrega en la celda
+                        grilla.append(String.format("│  %-10s",  v.getNumVuelo()));
+                        vueloEncontrado = true;
+                        break;
+                    }
+                }
+                if (!vueloEncontrado) {
+                    grilla.append("│            "); // Espacio vacío para celdas sin vuelo
+                }
+            }
+            grilla.append("│\n");
+    
+            // Línea divisoria entre filas
+            grilla.append("├───────────");
+            for (int hora = horaInicio; hora <= horaFin; hora++) {
+                grilla.append("┼────────────");
+            }
+            grilla.append("┤\n");
+        }
+    
+
+    
+        // Mostrar la grilla en consola
+        System.out.println(grilla);
+    }
+    
+    
+    
+
+
+
+    
 }
